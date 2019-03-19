@@ -23,7 +23,7 @@ type Author struct {
 	LastName   string `json:"lastname"`
 }
 
-//GET ALL BOOKS
+//Get all books
 func getBooks(w http.ResponseWriter, r *http.Request){
 	w.Header().Set("Content-Type","application/json")
 	json.NewEncoder(w).Encode(books)
@@ -87,6 +87,13 @@ func deleteBook(w http.ResponseWriter, r *http.Request){
 	json.NewEncoder(w).Encode(books)
 }
 
+// Healthcheck
+func healthcheck(w http.ResponseWriter, r *http.Request){
+	w.WriteHeader(200)
+	w.Write([]byte("I'm alive and healthy!"))
+}
+
+
 func main()  {
 
 	r :=mux.NewRouter()
@@ -97,6 +104,7 @@ func main()  {
 	books = append(books, Book{ID:"2",Isbn:"66776",Title:"Book 2",Author:&Author{FirstName:"John",LastName:"Paul"}})
 
 	//Route Handlers
+	r.HandleFunc("/healthcheck",healthcheck).Methods("GET")
 	r.HandleFunc("/api/books",getBooks).Methods("GET")
 	r.HandleFunc("/api/books/{id}",getBook).Methods("GET")
 	r.HandleFunc("/api/books",createBook).Methods("POST")
